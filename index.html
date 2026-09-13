@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>WINTERS - El Nino/La Nina, QBO, Solar Cycle teleconnections</title>
+
+  <style>
+    :root {
+      --bg: #fff9cf;
+      --panel: #fffdf0;
+      --panel-2: #fff7bf;
+      --border: #d8c96a;
+      --text: #383317;
+      --muted: #6e673c;
+      --accent: #7f711a;
+      --accent-dark: #5f5512;
+      --shadow: 0 8px 28px rgba(92, 78, 12, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        linear-gradient(rgba(255, 250, 211, 0.97), rgba(255, 250, 211, 0.97)),
+        radial-gradient(circle at 20% 10%, #fff5a8 0, transparent 34%),
+        radial-gradient(circle at 80% 0%, #ffef9b 0, transparent 32%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-width: 860px;
+    }
+
+    .page {
+      width: min(1500px, 96vw);
+      margin: 0 auto;
+      padding: 18px 20px 36px;
+    }
+
+    .header {
+      position: relative;
+      min-height: 132px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 170px 18px 170px;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(27px, 2.7vw, 44px);
+      line-height: 1.15;
+      color: #514913;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 0 #fff;
+    }
+
+    .logo {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 116px;
+      height: 116px;
+      object-fit: contain;
+      border-radius: 50%;
+      filter: drop-shadow(0 4px 8px rgba(56, 51, 23, 0.16));
+    }
+
+    .selectors {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      width: 100%;
+      margin: 0 auto 18px;
+    }
+
+    .selector-card {
+      background: rgba(255, 253, 240, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px 14px;
+      box-shadow: 0 4px 16px rgba(102, 88, 20, 0.08);
+    }
+
+    .selector-card label {
+      display: block;
+      margin: 0 0 7px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-dark);
+    }
+
+    select {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: 1px solid #cbb94e;
+      border-radius: 9px;
+      background: #fffef7;
+      color: #332f17;
+      font-size: 16px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #8d7d1b;
+      box-shadow: 0 0 0 3px rgba(141, 125, 27, 0.13);
+    }
+
+    .viewer {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .selection-title {
+      width: 100%;
+      padding: 8px 12px 13px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #4e471b;
+    }
+
+    #plotImage {
+      display: none;
+      max-width: 100%;
+      width: auto;
+      max-height: calc(100vh - 270px);
+      object-fit: contain;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .message {
+      width: 100%;
+      min-height: 440px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.45;
+    }
+
+    .filename {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #857c47;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777041;
+      font-size: 13px;
+      padding-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <header class="header">
+      <h1>WINTERS - El Nino/La Nina, QBO, Solar Cycle teleconnections</h1>
+      <img class="logo" src="teleconnections-logo.png" alt="Logo" />
+    </header>
+
+    <section class="selectors">
+      <div class="selector-card">
+        <label for="ensoSelect">ENSO</label>
+        <select id="ensoSelect">
+          <option value="">No ENSO</option>
+          <option value="ModeratePlusElNino">Moderate or above El Nino</option>
+          <option value="StrongPlusElNino">Strong or above El Nino</option>
+          <option value="VeryStrongElNino">Very Strong El Nino</option>
+          <option value="ModeratePlusLaNina">Moderate or above La Nina</option>
+          <option value="StrongLaNina">Strong La Nina</option>
+        </select>
+      </div>
+
+      <div class="selector-card">
+        <label for="qboSelect">QBO</label>
+        <select id="qboSelect">
+          <option value="">No QBO</option>
+          <option value="EQBO">East QBO</option>
+          <option value="WQBO">West QBO</option>
+        </select>
+      </div>
+
+      <div class="selector-card">
+        <label for="solarSelect">Solar Cycle</label>
+        <select id="solarSelect">
+          <option value="">No Solar Cycle</option>
+          <option value="SolarMin">Solar Cycle Minimum</option>
+          <option value="SolarMax">Solar Cycle Maximum</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="viewer">
+      <div id="selectionTitle" class="selection-title"></div>
+
+      <img id="plotImage" alt="ERA5 500 hPa geopotential height anomaly composite" />
+
+      <div id="message" class="message">
+        Select at least one ENSO, QBO, or Solar Cycle category above.
+      </div>
+
+      <div id="filename" class="filename"></div>
+    </section>
+
+    <div class="footer">
+      ERA5 winter (December-February) 500 hPa geopotential-height anomaly composites
+    </div>
+
+  </main>
+
+  <script>
+    const ensoSelect = document.getElementById("ensoSelect");
+    const qboSelect = document.getElementById("qboSelect");
+    const solarSelect = document.getElementById("solarSelect");
+
+    const plotImage = document.getElementById("plotImage");
+    const message = document.getElementById("message");
+    const selectionTitle = document.getElementById("selectionTitle");
+    const filenameBox = document.getElementById("filename");
+
+    // Friendly titles, matching the terminology used in the Python plots.
+    const titles = {
+      "ModeratePlusElNino": "Moderate or above El Nino",
+      "StrongPlusElNino": "Strong or above El Nino",
+      "VeryStrongElNino": "Very Strong El Nino",
+      "ModeratePlusLaNina": "Moderate or above La Nina",
+      "StrongLaNina": "Strong La Nina",
+
+      "WQBO": "West QBO",
+      "EQBO": "East QBO",
+
+      "SolarMin": "Solar Cycle at Minimum",
+      "SolarMax": "Solar Cycle at Maximum"
+    };
+
+    function updatePlot() {
+      const selected = [
+        ensoSelect.value,
+        qboSelect.value,
+        solarSelect.value
+      ].filter(Boolean);
+
+      // Nothing selected.
+      if (selected.length === 0) {
+        plotImage.style.display = "none";
+        plotImage.removeAttribute("src");
+
+        message.style.display = "flex";
+        message.textContent =
+          "Select at least one ENSO, QBO, or Solar Cycle category above.";
+
+        selectionTitle.textContent = "";
+        filenameBox.textContent = "";
+        return;
+      }
+
+      // The Python script names files in ENSO -> QBO -> Solar order.
+      const filename = selected.join("_") + ".png";
+      const friendlyTitle = selected.map(x => titles[x]).join(" AND ");
+
+      selectionTitle.textContent =
+        "WINTERS (December-February): " + friendlyTitle;
+
+      const filename = selected.join("_") + ".png";
+	  const imagePath = "images/" + filename;
+
+	  filenameBox.textContent = imagePath;
+
+      // Hide old image while testing the new file.
+      plotImage.style.display = "none";
+      message.style.display = "flex";
+      message.textContent = "Loading plot...";
+
+      // Force image reload if returning to the same selection.
+      plotImage.onload = function () {
+        message.style.display = "none";
+        plotImage.style.display = "block";
+      };
+
+      plotImage.onerror = function () {
+        plotImage.style.display = "none";
+        message.style.display = "flex";
+        message.innerHTML =
+          "<div><strong>No plot exists for this combination.</strong><br><br>" +
+          "This normally means there were no common winters for the selected categories, " +
+          "or the PNG file has not been uploaded to the GitHub repository.<br><br>" +
+          "<small>Expected file: " + imagePath  + "</small></div>";
+      };
+
+      plotImage.src = imagePath;
+    }
+
+    ensoSelect.addEventListener("change", updatePlot);
+    qboSelect.addEventListener("change", updatePlot);
+    solarSelect.addEventListener("change", updatePlot);
+
+    updatePlot();
+  </script>
+
+</body>
+</html>
