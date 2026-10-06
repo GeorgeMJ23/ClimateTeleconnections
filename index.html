@@ -284,15 +284,13 @@
 
       // The Python script names files in ENSO -> QBO -> Solar order.
       const filename = selected.join("_") + ".png";
+      const imagePath = "images/" + filename;
       const friendlyTitle = selected.map(x => titles[x]).join(" AND ");
 
       selectionTitle.textContent =
         "WINTERS (December-February): " + friendlyTitle;
 
-      const filename = selected.join("_") + ".png";
-	  const imagePath = "images/" + filename;
-
-	  filenameBox.textContent = imagePath;
+      filenameBox.textContent = imagePath;
 
       // Hide old image while testing the new file.
       plotImage.style.display = "none";
@@ -312,7 +310,7 @@
           "<div><strong>No plot exists for this combination.</strong><br><br>" +
           "This normally means there were no common winters for the selected categories, " +
           "or the PNG file has not been uploaded to the GitHub repository.<br><br>" +
-          "<small>Expected file: " + imagePath  + "</small></div>";
+          "<small>Expected file: " + imagePath + "</small></div>";
       };
 
       plotImage.src = imagePath;
